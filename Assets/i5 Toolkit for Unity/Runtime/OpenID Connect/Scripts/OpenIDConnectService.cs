@@ -140,38 +140,7 @@ namespace i5.Toolkit.Core.OpenIDConnectClient
 
             // for all non-native apps: create a listener server
 #if UNITY_EDITOR || UNITY_STANDALONE
-
-            if (ServerListener == null)
-            {
-                i5Debug.LogError("Redirect server listener is not set. Please set it before accessing the OIDC workflow.", this);
-                return;
-            }
-
-            if (ServerListener.ServerActive)
-            {
-                OidcProvider.OpenLoginPage(Scopes, ServerListener.ListeningUri);
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(ServerListener.ListeningUri))
-                {
-                    ServerListener.GenerateListeningUri();
-                }
-                string urlStart = "<html><head>";
-                string customAdditionalRedirect = "";
-                if (!string.IsNullOrEmpty(RedirectURI))
-                {
-                    customAdditionalRedirect = string.Format("<meta http-equiv=\"Refresh\" content=\"0; url = {0}\" />"
-                        , RedirectURI);
-                }
-                string urlEnd = "</head><body>Please return to the app</body></html>";
-                ServerListener.ResponseString = urlStart + customAdditionalRedirect + urlEnd;
-                ServerListener.RedirectReceived += ServerListener_RedirectReceived;
-                ServerListener.StartServer();
-
-                OidcProvider.OpenLoginPage(Scopes, ServerListener.ListeningUri);
-            }
-
+            OidcProvider.OpenLoginPage(Scopes, RedirectURI);
             // for native apps use deep linking
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WSA
             OidcProvider.OpenLoginPage(Scopes, RedirectURI);
